@@ -1,0 +1,15 @@
+# EditorConfig helps developers define and maintain consistent coding styles between different editors and IDEs
+# For more information about the EditorConfig project, please see http://editorconfig.org/
+
+# Top-most EditorConfig file
+root = true
+
+# Unix-style line endings
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Python-specific settings
+[*.py]
+indent_style = space
+indent_size = 4
