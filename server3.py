@@ -26,7 +26,6 @@ output = StreamingOutput()
 
 def get_stream():
     while True:
-        print("")
         with output.condition:
             output.condition.wait()
             frame = output.frame
