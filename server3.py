@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Response
+from fastapi.responses import StreamingResponse
 from picamera2 import Picamera2
 from picamera2.encoders import JpegEncoder
 from picamera2.outputs import FileOutput
@@ -23,24 +24,20 @@ class StreamingOutput(io.BufferedIOBase):
 
 output = StreamingOutput()
 
+def get_stream():
+    while True:
+        print("")
+        with output.condition:
+            output.condition.wait()
+            frame = output.frame
+        yield b'--FRAME\r\n'
+        yield b'Content-Type: image/jpeg\r\n\r\n'
+        yield frame
+        yield b'\r\n'
+        
 @app.get("/stream.mjpg")
 async def stream_mjpg():
-    global counter
-    try:
-        counter += 1
-        print("Current viewers:", counter)
-        while True:
-            with output.condition:
-                output.condition.wait()
-                frame = output.frame
-            yield b'--FRAME\r\n'
-            yield b'Content-Type: image/jpeg\r\n\r\n'
-            yield frame
-            yield b'\r\n'
-    except Exception as e:
-        counter -= 1
-        print("Current viewers:", counter)
-        print('Removed streaming client:', str(e))
+    return StreamingResponse(gen_frames(), media_type='multipart/x-mixed-replace; boundary=FRAME')
 
 @app.get("/status")
 async def status():
