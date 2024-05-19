@@ -34,10 +34,10 @@ def get_stream():
         yield b'Content-Type: image/jpeg\r\n\r\n'
         yield frame
         yield b'\r\n'
-        
+
 @app.get("/stream.mjpg")
 async def stream_mjpg():
-    return StreamingResponse(gen_frames(), media_type='multipart/x-mixed-replace; boundary=FRAME')
+    return StreamingResponse(get_stream(), media_type='multipart/x-mixed-replace; boundary=FRAME')
 
 @app.get("/status")
 async def status():
